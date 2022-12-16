@@ -81,14 +81,18 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Framework Classes</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../stateful/layers.html">Layers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../stateful/module.html">Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../stateful/converters.html">Converters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../stateful/activations.html">Activations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../stateful/layers.html">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../stateful/converters.html">Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../stateful/module.html">Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../stateful/initializers.html">Initializers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../stateful/sequential.html">Sequential</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../stateful/norms.html">Norms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../stateful/optimizers.html">Optimizers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../stateful/sequential.html">Sequential</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Nested array</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../nested_array/nested_array.html">Nested array</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Docs</span></p>
 <ul>
@@ -159,7 +163,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">duplicate_index_chains</span> <span class="o">=</span> <span class="p">()</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ivy</span><span class="o">.</span><span class="n">Container</span><span class="p">):</span>
-        <span class="n">duplicate_index_chains</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">duplicate_array_keychains</span><span class="p">()</span>
+        <span class="n">duplicate_index_chains</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">cont_duplicate_array_keychains</span><span class="p">()</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)):</span>
         <span class="n">duplicate_index_chains</span> <span class="o">=</span> <span class="n">ivy</span><span class="o">.</span><span class="n">duplicate_array_index_chains</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">duplicate_index_chains</span>
@@ -180,11 +184,13 @@
         <span class="k">return</span> <span class="n">x</span>
 
     <span class="c1"># Convert all required arrays to float variables</span>
-    <span class="n">map_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ivy</span><span class="o">.</span><span class="n">nested_map</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">inner_fn</span><span class="p">,</span> <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">map_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ivy</span><span class="o">.</span><span class="n">nested_map</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">inner_fn</span><span class="p">,</span> <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shallow</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
     <span class="k">if</span> <span class="n">xs_grad_idxs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ivy</span><span class="o">.</span><span class="n">map_nest_at_indices</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">xs_grad_idxs</span><span class="p">,</span> <span class="n">map_fn</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">xs</span>
-    <span class="k">return</span> <span class="n">ivy</span><span class="o">.</span><span class="n">nested_map</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">map_fn</span><span class="p">,</span> <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ivy</span><span class="o">.</span><span class="n">nested_map</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">map_fn</span><span class="p">,</span> <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shallow</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_get_required_native_variables</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">xs_grad_idxs</span><span class="p">):</span>
@@ -214,7 +220,7 @@
     <span class="n">xs</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">xs</span>
         <span class="k">if</span> <span class="n">ivy</span><span class="o">.</span><span class="n">is_array</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
-        <span class="k">else</span> <span class="n">xs</span><span class="o">.</span><span class="n">prune_empty</span><span class="p">()</span>
+        <span class="k">else</span> <span class="n">xs</span><span class="o">.</span><span class="n">cont_prune_empty</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ivy</span><span class="o">.</span><span class="n">Container</span><span class="p">)</span>
         <span class="k">else</span> <span class="n">ivy</span><span class="o">.</span><span class="n">prune_empty</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
     <span class="p">)</span>
@@ -357,7 +363,10 @@
 
 
 <span class="n">_to_ivy</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xs</span><span class="p">:</span> <span class="n">ivy</span><span class="o">.</span><span class="n">nested_map</span><span class="p">(</span>
-    <span class="n">xs</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ivy</span><span class="o">.</span><span class="n">to_ivy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">ivy</span><span class="o">.</span><span class="n">is_array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">,</span> <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">xs</span><span class="p">,</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ivy</span><span class="o">.</span><span class="n">to_ivy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">ivy</span><span class="o">.</span><span class="n">is_array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">,</span>
+    <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">shallow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -365,6 +374,7 @@
     <span class="n">xs</span><span class="p">,</span>
     <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ivy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ivy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">ivy</span><span class="o">.</span><span class="n">is_array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">,</span>
     <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">shallow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -374,7 +384,9 @@
 
 <span class="k">def</span> <span class="nf">_variable</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">ivy</span><span class="o">.</span><span class="n">to_native</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">nested</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="n">ivy</span><span class="o">.</span><span class="n">nested_map</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">current_backend</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span> <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">ivy</span><span class="o">.</span><span class="n">nested_map</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">current_backend</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span> <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shallow</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">ivy</span><span class="o">.</span><span class="n">nested_map</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">ivy</span><span class="o">.</span><span class="n">to_ivy</span><span class="p">,</span> <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
@@ -384,6 +396,7 @@
         <span class="n">x</span><span class="p">,</span>
         <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">current_backend</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">is_variable</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exclusive</span><span class="o">=</span><span class="n">exclusive</span><span class="p">),</span>
         <span class="n">include_derived</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">shallow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
 
@@ -530,7 +543,7 @@
 <span class="sd">    &gt;&gt;&gt; ivy.set_with_grads(True)</span>
 <span class="sd">    &gt;&gt;&gt; ivy.unset_with_grads()</span>
 <span class="sd">    &gt;&gt;&gt; print(ivy.with_grads(with_grads=None))</span>
-<span class="sd">    False</span>
+<span class="sd">    True</span>
 
 <span class="sd">    &gt;&gt;&gt; ivy.set_with_grads(True)</span>
 <span class="sd">    &gt;&gt;&gt; ivy.unset_with_grads()</span>
